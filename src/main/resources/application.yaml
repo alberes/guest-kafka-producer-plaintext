@@ -1,9 +1,12 @@
 spring:
   application: name=guest-kafka-producer-textpain
   kafka:
-    bootstrap-servers: localhost:9092
+    bootstrap-servers: guest-broker:9092
     producer:
       group-id: guest-producer
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.apache.kafka.common.serialization.StringSerializer
       topic: guest-topic
+
+server:
+  port: 8081

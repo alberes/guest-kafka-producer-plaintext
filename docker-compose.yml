@@ -4,11 +4,15 @@ services:
     container_name: zookeeper
     ports:
       - "2181:2181"
-  kafka:
+    networks:
+      - guests-network
+  guest-broker:
     image: wurstmeister/kafka
     container_name: guest-broker
     ports:
       - "9092:9092"
+    networks:
+      - guests-network
     environment:
       #KAFKA_ADVERTISED_LISTENERS: INSIDE://localhost:9092,OUTSIDE://localhost:9093
       #KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INSIDE:PLAINTEXT,OUTSIDE:PLAINTEXT
@@ -17,8 +21,8 @@ services:
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
       KAFKA_CREATE_TOPICS: "guest-topic"
       KAFKA_BROKER_ID: 1
-      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092,SASL_PLAINTEXT://0.0.0.0:9093
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092,SASL_PLAINTEXT://localhost:9093
+      KAFKA_LISTENERS: PLAINTEXT://guest-broker:9092,SASL_PLAINTEXT://guest-broker:9093
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://guest-broker:9092,SASL_PLAINTEXT://guest-broker:9093
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,SASL_PLAINTEXT:SASL_PLAINTEXT
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
       KAFKA_SASL_ENABLED_MECHANISMS: PLAIN
@@ -26,6 +30,15 @@ services:
       KAFKA_OPTS: -Djava.security.auth.login.config=/opt/kafka/kafka_server_jaas.conf
     volumes:
       - ./kafka_server_jaas.conf:/opt/kafka/kafka_server_jaas.conf
+  guest-kafka-producer-plaintext:
+    image: guest-kafka-producer-plaintext
+    container_name: guest-kafka-producer-plaintext
+    ports:
+      - "8081:8081"
+    networks:
+      - guests-network
+    depends_on:
+      - guest-broker
 networks:
-  kafka-net:
+  guests-network:
     driver: bridge

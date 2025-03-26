@@ -11,7 +11,7 @@
 	<groupId>io.github.alberes</groupId>
 	<artifactId>guest-kafka-producer-plaintext</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>guest-kafka-producer-textpain</name>
+	<name>guest-kafka-producer-plaintext</name>
 	<description>Demo project for Spring Boot</description>
 	<url/>
 	<licenses>
