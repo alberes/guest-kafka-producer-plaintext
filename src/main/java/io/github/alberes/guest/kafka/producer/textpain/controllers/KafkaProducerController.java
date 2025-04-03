@@ -1,9 +1,8 @@
 package io.github.alberes.guest.kafka.producer.textpain.controllers;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.alberes.guest.kafka.producer.textpain.controllers.dto.GuestDto;
 import io.github.alberes.guest.kafka.producer.textpain.services.GuestKafkaProduceService;
+import io.github.alberes.guest.kafka.producer.textpain.utils.JsonUtils;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -20,15 +19,11 @@ public class KafkaProducerController {
     private GuestKafkaProduceService service;
 
     @Autowired
-    private ObjectMapper objectMapper;
+    private JsonUtils jsonUtils;
 
     @PostMapping
     public ResponseEntity<Void> send(@RequestBody @Valid GuestDto dto){
-        try {
-            this.service.send(this.objectMapper.writeValueAsString(dto));
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
-        }
+        this.service.send(jsonUtils.toJson(dto));
         return ResponseEntity.created(null).build();
     }
 
